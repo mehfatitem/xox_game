@@ -1,18 +1,3 @@
-function compareArray(array , element){
-    var counter = 0;
-    for(var i=1;i<array.length-1;i++){
-        for(var j=i+1;j<array.length;j++){
-            if(array[i] == array[j] && array[i] == element){
-                counter++
-            }
-        }
-    }
-    if(array.length == counter)
-        return true;
-    else 
-        return false;
-}
-
 function playComputer(){
     var first = Math.floor((Math.random() * 3) + 1);
     var second = Math.floor((Math.random() * 3) + 1);
@@ -172,12 +157,15 @@ $(document).ready(function(){
                     }
                 }else{
                     clickedOneMoreTime = true;
+                    playComputer();
                 }
             }).on('mouseup',function(){
                 setTimeout(function(){
                     if(gameIsEnd !=true && !clickedOneMoreTime){
                         playComputer(); 
                     }
+                    if(clickedOneMoreTime)
+                        playComputer();
                 },500);
                 clickedOneMoreTime = false;
             });
