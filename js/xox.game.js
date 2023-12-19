@@ -1,174 +1,116 @@
-function playComputer(){
-    var first = Math.floor((Math.random() * 3) + 1);
-    var second = Math.floor((Math.random() * 3) + 1);
-    if($("#"+first+"x"+second).text() != ""){
-        playComputer();
-    }else{
-        $("#" + first+"x"+second).trigger("click");
+class TicTacToeGame {
+    constructor() {
+        this.hitCounter = 0;
+        this.gameIsEnd = false;
+        this.winSnd = new Audio("sound/win.mp3");
+        this.loseSnd = new Audio("sound/lose.mp3");
+        this.clickedOneMoreTime = false;
+        this.currentPlayerSymbol = "X"; // Oyun X sembolüyle başlasın
+        this.initializeGame();
     }
-}
 
-function resetTheGame(){
-    $("#game-table td").click(function(){
-        $("#game-table td").empty();
-        $("#game-steps").empty();
-        $("#game-table td").css("background-color" , "white");
-        hitCounter = 0;
-        window.location.reload();
-    });
-}
+    initializeGame() {
+        // Oyun alanındaki hücrelere tıklandığında gerçekleşecek olayları tanımla
+        $("#game-table td").click((event) => {
+            this.handlePlayerMove(event);
+        }).on('mouseup', () => {
+            this.playComputer();
+        });
+    }
 
-$(document).ready(function(){
-    var hitCounter = 0;
-    var gameIsEnd;
-    var winSnd = new Audio("sound/win.mp3"); // buffers automatically when created
-    var loseSnd = new Audio("sound/lose.mp3"); // buffers automatically when created
-    var clickedOneMoreTime = false;
-    for(var i=1;i<=3;i++){
-        for(var j=1;j<=3;j++){
-            $("#"+i+"x"+j).click(function(event){
-                var text = $(this).text();
-                if(text.length==0){
-                    var row = $(this).attr("row");
-                    var column = $(this).attr("column");
-                    if(hitCounter % 2 == 0){
-                        $(this).text("X");
-                        $(this).css("font-weight" , "bold");
-                        $("#game-steps").append("<b>" + (hitCounter+1) + ". </b>" + "You put the X to " + row + ". row , " + column + ". column" + "<br>");
-                        if($("#1x1").text() == "X" && $("#1x2").text() == "X" && $("#1x3").text() == "X"){
-                            $("#1").css("background-color" , "red");
-                            resetTheGame();
-                            gameIsEnd = true;
-                        }
-                        if($("#2x1").text() == "X" && $("#2x2").text() == "X" && $("#2x3").text() == "X"){
-                            $("#2").css("background-color" , "red");
-                            resetTheGame();
-                            gameIsEnd = true;
-                        }
-                        if($("#3x1").text() == "X" && $("#3x2").text() == "X" && $("#3x3").text() == "X"){
-                            $("#3").css("background-color" , "red");
-                            resetTheGame();
-                            gameIsEnd = true;
-                        }
-                        if($("#1x3").text() == "X" && $("#2x3").text() == "X" && $("#3x3").text() == "X"){
-                            $("#1x3").css("background-color" , "red");
-                            $("#2x3").css("background-color" , "red");
-                            $("#3x3").css("background-color" , "red");
-                            resetTheGame();
-                            gameIsEnd = true;
-                        }
-                        if($("#1x2").text() == "X" && $("#2x2").text() == "X" && $("#3x2").text() == "X"){
-                            $("#1x2").css("background-color" , "red");
-                            $("#2x2").css("background-color" , "red");
-                            $("#3x2").css("background-color" , "red");
-                            resetTheGame();
-                            gameIsEnd = true;
-                        }
-                        if($("#1x1").text() ==  "X" && $("#2x1").text() == "X" && $("#3x1").text() == "X"){
-                            $("#1x1").css("background-color" , "red");
-                            $("#2x1").css("background-color" , "red");
-                            $("#3x1").css("background-color" , "red")
-                            resetTheGame();
-                            gameIsEnd = true;
-                        }
-                        if($("#1x1").text() ==  "X" && $("#2x2").text() == "X" && $("#3x3").text() == "X"){
-                            $("#1x1").css("background-color" , "red");
-                            $("#2x2").css("background-color" , "red");
-                            $("#3x3").css("background-color" , "red");
-                            resetTheGame();
-                            gameIsEnd = true;
-                        }
-                        if($("#1x3").text() ==  "X" && $("#2x2").text() == "X" && $("#3x1").text() == "X"){ 
-                            $("#1x3").css("background-color" , "red");
-                            $("#2x2").css("background-color" , "red");
-                            $("#3x1").css("background-color" , "red");
-                            resetTheGame();
-                            gameIsEnd = true;
-                        }
-                        if(gameIsEnd){
-                            winSnd.play();
-                            $("#game-steps").append("<br><mytext><strong>GAME IS OVER</strong>." + "<strong style='color:red;'> YOU WIN !</strong></mytext>");
-                            return false;
-                        }
-                    }else{
-                        $(this).text("O");
-                        $(this).css("font-weight" , "bold");
-                        $("#game-steps").append("<b>" + (hitCounter+1) + ". </b>" + "Computer put the O to " + row + ". row , " + column + ". column" + "<br>");
-                        if($("#1x1").text() == "O" && $("#1x2").text() == "O" && $("#1x3").text() == "O"){
-                            $("#1").css("background-color" , "red");
-                            resetTheGame();
-                            gameIsEnd = true;
-                        }
-                        if($("#2x1").text() == "O" && $("#2x2").text() == "O" && $("#2x3").text() == "O"){
-                            $("#2").css("background-color" , "red");
-                            resetTheGame();
-                            gameIsEnd = true;
+    handlePlayerMove(event) {
+        const cell = $(event.target);
+        const text = cell.text();
 
-                        }
-                        if($("#3x1").text() == "O" && $("#3x2").text() == "O" && $("#3x3").text() == "O"){
-                            $("#3").css("background-color" , "red");
-                            resetTheGame();
-                            gameIsEnd = true;
-                        }
-                        if($("#1x3").text() == "O" && $("#2x3").text() == "O" && $("#3x3").text() == "O"){
-                            $("#1x3").css("background-color" , "red");
-                            $("#2x3").css("background-color" , "red");
-                            $("#3x3").css("background-color" , "red");
-                            resetTheGame();
-                            gameIsEnd = true;
-                        }
-                        if($("#1x2").text() == "O" && $("#2x2").text() == "O" && $("#3x2").text() == "O"){
-                            $("#1x2").css("background-color" , "red");
-                            $("#2x2").css("background-color" , "red");
-                            $("#3x2").css("background-color" , "red");
-                            resetTheGame();
-                            gameIsEnd = true;
-                        }
-                        if($("#1x1").text() ==  "O" && $("#2x1").text() == "O" && $("#3x1").text() == "O"){
-                            $("#1x1").css("background-color" , "red");
-                            $("#2x1").css("background-color" , "red");
-                            $("#3x1").css("background-color" , "red");
-                            resetTheGame();
-                            gameIsEnd = true;
-                        }
-                        if($("#1x1").text() ==  "O" && $("#2x2").text() == "O" && $("#3x3").text() == "O"){
-                            $("#1x1").css("background-color" , "red");
-                            $("#2x2").css("background-color" , "red");
-                            $("#3x3").css("background-color" , "red");
-                            resetTheGame();
-                            gameIsEnd = true;
-                        }
-                        if($("#1x3").text() ==  "O" && $("#2x2").text() == "O" && $("#3x1").text() == "O"){
-                            $("#1x3").css("background-color" , "red");
-                            $("#2x2").css("background-color" , "red");
-                            $("#3x1").css("background-color" , "red");
-                            resetTheGame();
-                            gameIsEnd = true;
-                        }
-                        if(gameIsEnd){
-                            loseSnd.play();
-                            $("#game-steps").append("<br><mytext><strong>GAME IS OVER</strong>." + "<strong style='color:red;'> COMPUTER WIN !</strong></mytext>");
-                            return false;
-                        }
-                    }
-                    hitCounter++;
-                    if(hitCounter == 9){
-                        resetTheGame();
-                    }
-                }else{
-                    clickedOneMoreTime = true;
-                    playComputer();
+        if (text.length === 0 && !this.gameIsEnd) {
+            const row = cell.attr("row");
+            const column = cell.attr("column");
+
+            if (!this.gameIsEnd) {
+                this.placeSymbol(this.currentPlayerSymbol, cell, row, column);
+                this.hitCounter++;
+                const isGameOver = this.checkGameStatus(this.currentPlayerSymbol);
+                
+                if (isGameOver) {
+                    this.endGame(this.currentPlayerSymbol);
+                    return false;
                 }
-            }).on('mouseup',function(){
-                setTimeout(function(){
-                    if(gameIsEnd !=true && !clickedOneMoreTime){
-                        playComputer(); 
-                    }
-                    if(clickedOneMoreTime)
-                        playComputer();
-                },500);
-                clickedOneMoreTime = false;
-            });
+
+                this.currentPlayerSymbol = (this.currentPlayerSymbol === "X") ? "O" : "X"; // Sırayı diğer oyuncuya geçir
+                if (this.currentPlayerSymbol === "O") {
+                    this.playComputer();
+                }
+            }
+        } else {
+            this.clickedOneMoreTime = true;
+            this.playComputer();
         }
     }
+
+    placeSymbol(symbol, cell, row, column) {
+        cell.text(symbol);
+        cell.css("font-weight", "bold");
+        const playerType = (symbol === "X") ? "You" : "Computer";
+        $("#game-steps").append("<b>" + (this.hitCounter + 1) + ". </b>" + playerType + " put the " + symbol + " to " + row + ". row , " + column + ". column" + "<br>");
+    }
+
+    playComputer() {
+        if (!this.gameIsEnd && this.currentPlayerSymbol === "O" && !this.clickedOneMoreTime) {
+            let first, second;
+            do {
+                first = Math.floor((Math.random() * 3) + 1);
+                second = Math.floor((Math.random() * 3) + 1);
+            } while ($("#"+first+"x"+second).text() !== "");
+
+            const cell = $("#" + first+"x"+second);
+            this.placeSymbol("O", cell, first, second);
+            this.hitCounter++;
+            const isGameOver = this.checkGameStatus("O");
+            
+            if (isGameOver) {
+                this.endGame("O");
+                return;
+            }
+
+            this.currentPlayerSymbol = "X"; // Sırayı diğer oyuncuya geçir
+            this.clickedOneMoreTime = false;
+        }
+    }
+
+    checkGameStatus(symbol) {
+        const winningCombinations = [
+            ["1x1", "1x2", "1x3"], ["2x1", "2x2", "2x3"], ["3x1", "3x2", "3x3"], // Rows
+            ["1x1", "2x1", "3x1"], ["1x2", "2x2", "3x2"], ["1x3", "2x3", "3x3"], // Columns
+            ["1x1", "2x2", "3x3"], ["1x3", "2x2", "3x1"] // Diagonals
+        ];
+
+        for (const combination of winningCombinations) {
+            const [cell1, cell2, cell3] = combination;
+            if ($("#"+cell1).text() === symbol && $("#"+cell2).text() === symbol && $("#"+cell3).text() === symbol) {
+                $(`#${cell1}`).css("background-color", "red");
+                $(`#${cell2}`).css("background-color", "red");
+                $(`#${cell3}`).css("background-color", "red");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    endGame(winner) {
+        this.gameIsEnd = true;
+        if (winner === "X") {
+            this.winSnd.play();
+            $("#game-steps").append("<br><mytext><strong>GAME IS OVER</strong>.<strong style='color:red;'> YOU WIN !</strong></mytext>");
+        } else if (winner === "O") {
+            this.loseSnd.play();
+            $("#game-steps").append("<br><mytext><strong>GAME IS OVER</strong>.<strong style='color:red;'> COMPUTER WIN !</strong></mytext>");
+        } else {
+            $("#game-steps").append("<br><mytext><strong>GAME IS OVER</strong>.<strong style='color:red;'> IT'S A DRAW !</strong></mytext>");
+        }
+    }
+}
+
+// Oyunun başlatılması
+$(document).ready(() => {
+    const game = new TicTacToeGame();
 });
